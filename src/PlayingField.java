@@ -1,6 +1,6 @@
 import java.util.Iterator;
 
-public class PlayingField {
+public class PlayingField implements Iterable<Field> {
 
     public final int LENGTH = 4;
     public final int WIDTH = 4;
@@ -14,6 +14,10 @@ public class PlayingField {
                 fields[x][y] = new Field();
             }
         }
+    }
+
+    public Field getField(int line, int column) {
+        return fields[line][column];
     }
 
     public void surroundFieldWith(int x, int y, String text) {
@@ -53,41 +57,43 @@ public class PlayingField {
         }
         System.out.println("#################################################");
     }
+
+    @Override
+    public Iterator<Field> iterator() {
+        return new FieldIterator(this);
+    }
+
+    static class FieldIterator implements Iterator<Field> {
+        int curX = 0;
+        int curY = 0;
+        PlayingField playingField;
+
+        FieldIterator(PlayingField pf) {
+            playingField = pf;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (curX < playingField.LENGTH - 1)
+                return true;
+            if (curY < playingField.WIDTH - 1)
+                return true;
+            return false;
+        }
+
+        @Override
+        public Field next() {
+            curX++;
+            if (curX < playingField.LENGTH)
+                return playingField.getField(curX, curY);
+
+            curX = 0;
+            curY++;
+            if (curY < playingField.WIDTH)
+                return playingField.getField(curX, curY);
+
+            return null;
+        }
+    }
 }
-/*
-←
-↑
-→
-↓
-⟡
-⋍⋍⋍
-⩰⩰⩰
-BBB
-
-⪟⪟⪟
-SSS
-ooo
-G
-WWW
-
-
-#################################################
-#           #           #           #           #
-#    WB     #           #           #           #
-#           #           #           #           #
-#################################################
-#           #           #           #           #
-#           #           #           #           #
-#           #           #           #           #
-#################################################
-#           #           #           #           #
-#           #           #           #           #
-#           #           #           #           #
-#################################################
-#           #           #           #           #
-#           #           #           #           #
-#    →→→    #           #           #           #
-#################################################
-
-*/
 
